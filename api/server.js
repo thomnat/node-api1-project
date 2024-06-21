@@ -30,7 +30,7 @@ server.post('/api/users', async (req, res) => {
   } 
     const newUser = await User.insert({ name, bio });
     console.log(newUser);
-    res.status(201).json({ newUser });
+    res.status(201).json(newUser);
   } catch (err) {
     res.status(500).json({ message: `Error creating user: ${err.message}`});
   }
@@ -61,10 +61,7 @@ server.delete('/api/users/:id', async (req, res) => {
     if (!deletedUser) {
       res.status(404).json({ message: "does not exist"});
     } else {
-      res.status(200).json({ 
-        message: "user deleted", 
-        data: deletedUser,
-       });
+      res.status(200).json(deletedUser);
     }
   } catch (err) {
     res.status(500).json({ message: `Error deleting user: ${err.message}`});
@@ -75,17 +72,18 @@ server.put("/api/users/:id", async (req, res) => {
   try {
     const { id } = req.params
     const { name, bio } = req.body;
+
     if (!name || !bio) {
-      res.status(400).json({ message: "provide name and bio" });
+      return res.status(400).json({ message: "provide name and bio" });
     } 
       const updatedUser = await User.update(id, { name, bio });
+
       if (!updatedUser) {
-        res.status(404).json({ message: "User does not exist"})
-      } else {
-        res.status(200).json({ updatedUser });
-    }
+        return res.status(404).json({message: "user does not exist"})
+      } 
+      res.status(200).json(updatedUser);
   } catch (err) {
-    res.status(500).json({ message: `Error updating user: ${err.message}`});
+    res.status(500).json({message: `Error updating user ${err.message}`});
   }
 })
 
